@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.heronix.talkmodule.ui.controller.MainController"
+            styleClass="main-container">
+
+    <!-- Top Bar -->
+    <top>
+        <VBox>
+            <!-- Alert Banner (hidden by default) -->
+            <HBox fx:id="alertBanner" styleClass="alert-banner" alignment="CENTER" spacing="20" managed="false" visible="false">
+                <Label fx:id="alertBannerText" styleClass="alert-banner-text" HBox.hgrow="ALWAYS"/>
+                <Button text="✕" onAction="#handleDismissAlert" styleClass="alert-dismiss-button"/>
+            </HBox>
+
+            <!-- Header -->
+            <HBox styleClass="header" alignment="CENTER_LEFT" spacing="20">
+                <padding>
+                    <Insets top="10" right="20" bottom="10" left="20"/>
+                </padding>
+
+                <Label text="HERONIX TalkModule" styleClass="header-title"/>
+
+                <Region HBox.hgrow="ALWAYS"/>
+
+                <Label fx:id="connectionStatusLabel" text="● Connected" styleClass="connection-status"/>
+
+                <Label fx:id="unreadCountLabel" styleClass="unread-badge" visible="false"/>
+
+                <Label fx:id="userNameLabel" text="User Name" styleClass="user-name"/>
+
+                <MenuButton text="☰" styleClass="menu-button">
+                    <items>
+                        <MenuItem text="Settings" onAction="#handleOpenSettings"/>
+                        <SeparatorMenuItem/>
+                        <MenuItem text="Logout" onAction="#handleLogout"/>
+                    </items>
+                </MenuButton>
+            </HBox>
+        </VBox>
+    </top>
+
+    <!-- Left Sidebar - Channels -->
+    <left>
+        <VBox styleClass="sidebar" prefWidth="250">
+            <padding>
+                <Insets top="10" right="10" bottom="10" left="10"/>
+            </padding>
+
+            <HBox alignment="CENTER_LEFT" spacing="10">
+                <Label text="Channels" styleClass="sidebar-title" HBox.hgrow="ALWAYS"/>
+                <Button text="+" onAction="#handleCreateChannel" styleClass="icon-button"/>
+            </HBox>
+
+            <ListView fx:id="channelListView" VBox.vgrow="ALWAYS" styleClass="channel-list"/>
+
+            <!-- Admin Panel -->
+            <VBox fx:id="adminPanel" styleClass="admin-panel" spacing="10">
+                <Separator/>
+                <Label text="Admin Tools" styleClass="sidebar-title"/>
+                <Button fx:id="alertButton" text="🚨 Emergency Alerts" onAction="#handleOpenAlerts"
+                        styleClass="admin-button" maxWidth="Infinity"/>
+                <Button fx:id="newsButton" text="📰 News Management" onAction="#handleOpenNews"
+                        styleClass="admin-button" maxWidth="Infinity"/>
+                <Button fx:id="usersButton" text="👥 User Management" onAction="#handleOpenUsers"
+                        styleClass="admin-button" maxWidth="Infinity"/>
+                <Button fx:id="analyticsButton" text="📊 Analytics" onAction="#handleOpenAnalytics"
+                        styleClass="admin-button" maxWidth="Infinity"/>
+            </VBox>
+        </VBox>
+    </left>
+
+    <!-- Center - Chat Area -->
+    <center>
+        <VBox styleClass="chat-area">
+            <!-- Channel Header -->
+            <HBox styleClass="channel-header" alignment="CENTER_LEFT" spacing="10">
+                <padding>
+                    <Insets top="10" right="15" bottom="10" left="15"/>
+                </padding>
+                <Label fx:id="selectedChannelLabel" text="Select a channel" styleClass="channel-name"/>
+                <Label fx:id="memberCountLabel" text="" styleClass="member-count"/>
+            </HBox>
+
+            <!-- Messages -->
+            <ListView fx:id="messageListView" VBox.vgrow="ALWAYS" styleClass="message-list"/>
+
+            <!-- Message Input -->
+            <HBox styleClass="message-input-container" spacing="10">
+                <padding>
+                    <Insets top="10" right="15" bottom="10" left="15"/>
+                </padding>
+                <TextArea fx:id="messageInputArea" promptText="Type a message... (Ctrl+Enter to send)"
+                          prefRowCount="2" HBox.hgrow="ALWAYS" styleClass="message-input"/>
+                <Button fx:id="sendButton" text="Send" onAction="#handleSendMessage" styleClass="send-button"/>
+            </HBox>
+        </VBox>
+    </center>
+
+</BorderPane>

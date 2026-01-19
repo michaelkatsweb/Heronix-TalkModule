@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.heronix.talkmodule.ui.controller.UserManagementController"
+            styleClass="management-container">
+
+    <top>
+        <VBox styleClass="management-header">
+            <padding>
+                <Insets top="15" right="20" bottom="15" left="20"/>
+            </padding>
+            <Label text="User Management" styleClass="management-title"/>
+            <Label text="Manage users, roles, and permissions" styleClass="management-subtitle"/>
+        </VBox>
+    </top>
+
+    <center>
+        <SplitPane dividerPositions="0.35">
+            <!-- User List Panel -->
+            <VBox styleClass="panel" spacing="10">
+                <padding>
+                    <Insets top="15" right="15" bottom="15" left="15"/>
+                </padding>
+
+                <HBox spacing="10">
+                    <TextField fx:id="searchField" promptText="Search users..." HBox.hgrow="ALWAYS"/>
+                    <Button text="Search" onAction="#handleSearch" styleClass="secondary-button"/>
+                </HBox>
+
+                <HBox spacing="10">
+                    <ComboBox fx:id="roleFilterCombo" promptText="Filter by role" HBox.hgrow="ALWAYS"/>
+                    <ComboBox fx:id="statusFilterCombo" promptText="Filter by status" HBox.hgrow="ALWAYS"/>
+                </HBox>
+
+                <ListView fx:id="userListView" VBox.vgrow="ALWAYS"/>
+
+                <HBox spacing="10">
+                    <Button text="Refresh" onAction="#handleRefresh" styleClass="secondary-button"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Label fx:id="userCountLabel" text="0 users"/>
+                </HBox>
+            </VBox>
+
+            <!-- User Details Panel -->
+            <VBox styleClass="panel" spacing="15">
+                <padding>
+                    <Insets top="15" right="15" bottom="15" left="15"/>
+                </padding>
+
+                <Label text="User Details" styleClass="panel-title"/>
+
+                <VBox spacing="5">
+                    <Label text="Username" styleClass="field-label"/>
+                    <TextField fx:id="usernameField" editable="false"/>
+                </VBox>
+
+                <VBox spacing="5">
+                    <Label text="Full Name" styleClass="field-label"/>
+                    <TextField fx:id="fullNameField"/>
+                </VBox>
+
+                <VBox spacing="5">
+                    <Label text="Email" styleClass="field-label"/>
+                    <TextField fx:id="emailField"/>
+                </VBox>
+
+                <VBox spacing="5">
+                    <Label text="Role" styleClass="field-label"/>
+                    <ComboBox fx:id="roleCombo" maxWidth="Infinity"/>
+                </VBox>
+
+                <VBox spacing="5">
+                    <Label text="Department" styleClass="field-label"/>
+                    <TextField fx:id="departmentField"/>
+                </VBox>
+
+                <HBox spacing="10">
+                    <CheckBox fx:id="activeCheckbox" text="Active"/>
+                    <CheckBox fx:id="verifiedCheckbox" text="Verified"/>
+                </HBox>
+
+                <Separator/>
+
+                <VBox spacing="5">
+                    <Label text="Last Login" styleClass="field-label"/>
+                    <Label fx:id="lastLoginLabel" text="-"/>
+                </VBox>
+
+                <VBox spacing="5">
+                    <Label text="Created" styleClass="field-label"/>
+                    <Label fx:id="createdLabel" text="-"/>
+                </VBox>
+
+                <Region VBox.vgrow="ALWAYS"/>
+
+                <HBox spacing="10">
+                    <Button text="Save Changes" onAction="#handleSaveUser" styleClass="primary-button" HBox.hgrow="ALWAYS"/>
+                </HBox>
+
+                <HBox spacing="10">
+                    <Button text="Reset Password" onAction="#handleResetPassword" styleClass="secondary-button"/>
+                    <Button text="Disable User" onAction="#handleDisableUser" styleClass="danger-button"/>
+                </HBox>
+            </VBox>
+        </SplitPane>
+    </center>
+
+</BorderPane>

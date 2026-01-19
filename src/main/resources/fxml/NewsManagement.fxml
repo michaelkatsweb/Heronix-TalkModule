@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.heronix.talkmodule.ui.controller.NewsManagementController"
+            styleClass="management-container">
+
+    <top>
+        <VBox styleClass="management-header">
+            <padding>
+                <Insets top="15" right="20" bottom="15" left="20"/>
+            </padding>
+            <Label text="News and Announcements Management" styleClass="management-title"/>
+            <Label text="Create, schedule, and manage news items for the campus" styleClass="management-subtitle"/>
+        </VBox>
+    </top>
+
+    <center>
+        <SplitPane dividerPositions="0.45">
+            <!-- Create News Panel -->
+            <VBox styleClass="panel" spacing="15">
+                <padding>
+                    <Insets top="15" right="15" bottom="15" left="15"/>
+                </padding>
+
+                <Label text="Create News Item" styleClass="panel-title"/>
+
+                <VBox spacing="5">
+                    <Label text="Headline" styleClass="field-label"/>
+                    <TextField fx:id="headlineField" promptText="News headline"/>
+                </VBox>
+
+                <VBox spacing="5" VBox.vgrow="ALWAYS">
+                    <Label text="Content" styleClass="field-label"/>
+                    <TextArea fx:id="contentArea" promptText="News content" VBox.vgrow="ALWAYS"/>
+                </VBox>
+
+                <HBox spacing="10">
+                    <VBox spacing="5" HBox.hgrow="ALWAYS">
+                        <Label text="Category" styleClass="field-label"/>
+                        <ComboBox fx:id="categoryCombo" maxWidth="Infinity" editable="true"/>
+                    </VBox>
+                </HBox>
+
+                <HBox spacing="20">
+                    <CheckBox fx:id="urgentCheckbox" text="Urgent"/>
+                    <CheckBox fx:id="pinnedCheckbox" text="Pinned"/>
+                </HBox>
+
+                <TitledPane text="Schedule (Optional)" expanded="false">
+                    <VBox spacing="10">
+                        <padding>
+                            <Insets top="10" right="10" bottom="10" left="10"/>
+                        </padding>
+                        <HBox spacing="10">
+                            <VBox spacing="5" HBox.hgrow="ALWAYS">
+                                <Label text="Publish At" styleClass="field-label"/>
+                                <DatePicker fx:id="publishDatePicker"/>
+                            </VBox>
+                            <VBox spacing="5" HBox.hgrow="ALWAYS">
+                                <Label text="Expires At" styleClass="field-label"/>
+                                <DatePicker fx:id="expiresDatePicker"/>
+                            </VBox>
+                        </HBox>
+                    </VBox>
+                </TitledPane>
+
+                <HBox spacing="10">
+                    <Button text="Publish Now" onAction="#handlePublishNow"
+                            styleClass="primary-button" HBox.hgrow="ALWAYS"/>
+                    <Button text="Schedule" onAction="#handleSchedule"
+                            styleClass="secondary-button" HBox.hgrow="ALWAYS"/>
+                </HBox>
+            </VBox>
+
+            <!-- News List Panel -->
+            <VBox styleClass="panel" spacing="10">
+                <padding>
+                    <Insets top="15" right="15" bottom="15" left="15"/>
+                </padding>
+
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Label text="Published News" styleClass="panel-title" HBox.hgrow="ALWAYS"/>
+                    <ToggleButton fx:id="showScheduledToggle" text="Show Scheduled"/>
+                </HBox>
+
+                <ListView fx:id="newsListView" VBox.vgrow="ALWAYS"/>
+
+                <HBox spacing="10">
+                    <Button text="Edit" onAction="#handleEdit" styleClass="secondary-button"/>
+                    <Button text="Pin/Unpin" onAction="#handleTogglePin" styleClass="secondary-button"/>
+                    <Button text="Delete" onAction="#handleDelete" styleClass="danger-button"/>
+                </HBox>
+            </VBox>
+        </SplitPane>
+    </center>
+
+</BorderPane>

@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.heronix.talkmodule.ui.controller.AnalyticsController"
+            styleClass="management-container">
+
+    <top>
+        <VBox styleClass="management-header">
+            <padding>
+                <Insets top="15" right="20" bottom="15" left="20"/>
+            </padding>
+            <Label text="Analytics Dashboard" styleClass="management-title"/>
+            <Label text="View usage statistics and activity metrics" styleClass="management-subtitle"/>
+        </VBox>
+    </top>
+
+    <center>
+        <ScrollPane fitToWidth="true">
+            <VBox spacing="20">
+                <padding>
+                    <Insets top="20" right="20" bottom="20" left="20"/>
+                </padding>
+
+                <!-- Summary Cards -->
+                <HBox spacing="15">
+                    <VBox styleClass="stat-card" HBox.hgrow="ALWAYS">
+                        <Label text="Total Messages" styleClass="stat-label"/>
+                        <Label fx:id="totalMessagesLabel" text="0" styleClass="stat-value"/>
+                        <Label fx:id="messagesChangeLabel" text="+0 today" styleClass="stat-change"/>
+                    </VBox>
+                    <VBox styleClass="stat-card" HBox.hgrow="ALWAYS">
+                        <Label text="Active Channels" styleClass="stat-label"/>
+                        <Label fx:id="activeChannelsLabel" text="0" styleClass="stat-value"/>
+                        <Label fx:id="channelsChangeLabel" text="+0 this week" styleClass="stat-change"/>
+                    </VBox>
+                    <VBox styleClass="stat-card" HBox.hgrow="ALWAYS">
+                        <Label text="Active Users" styleClass="stat-label"/>
+                        <Label fx:id="activeUsersLabel" text="0" styleClass="stat-value"/>
+                        <Label fx:id="usersChangeLabel" text="online now" styleClass="stat-change"/>
+                    </VBox>
+                    <VBox styleClass="stat-card" HBox.hgrow="ALWAYS">
+                        <Label text="Storage Used" styleClass="stat-label"/>
+                        <Label fx:id="storageLabel" text="0 MB" styleClass="stat-value"/>
+                        <Label fx:id="storageChangeLabel" text="of local cache" styleClass="stat-change"/>
+                    </VBox>
+                </HBox>
+
+                <!-- Activity Section -->
+                <TitledPane text="Recent Activity" expanded="true">
+                    <VBox spacing="10">
+                        <padding>
+                            <Insets top="15" right="15" bottom="15" left="15"/>
+                        </padding>
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                            <Label text="Time Range:" styleClass="field-label"/>
+                            <ComboBox fx:id="timeRangeCombo"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Button text="Refresh" onAction="#handleRefresh" styleClass="secondary-button"/>
+                        </HBox>
+                        <ListView fx:id="activityListView" prefHeight="200"/>
+                    </VBox>
+                </TitledPane>
+
+                <!-- Channel Statistics -->
+                <TitledPane text="Channel Statistics" expanded="true">
+                    <VBox spacing="10">
+                        <padding>
+                            <Insets top="15" right="15" bottom="15" left="15"/>
+                        </padding>
+                        <TableView fx:id="channelStatsTable" prefHeight="200">
+                            <columns>
+                                <TableColumn fx:id="channelNameColumn" text="Channel" prefWidth="200"/>
+                                <TableColumn fx:id="messageCountColumn" text="Messages" prefWidth="100"/>
+                                <TableColumn fx:id="memberCountColumn" text="Members" prefWidth="100"/>
+                                <TableColumn fx:id="lastActivityColumn" text="Last Activity" prefWidth="150"/>
+                            </columns>
+                        </TableView>
+                    </VBox>
+                </TitledPane>
+
+                <!-- News Statistics -->
+                <TitledPane text="News Statistics" expanded="false">
+                    <VBox spacing="10">
+                        <padding>
+                            <Insets top="15" right="15" bottom="15" left="15"/>
+                        </padding>
+                        <HBox spacing="20">
+                            <VBox spacing="5">
+                                <Label text="Published News" styleClass="field-label"/>
+                                <Label fx:id="publishedNewsLabel" text="0"/>
+                            </VBox>
+                            <VBox spacing="5">
+                                <Label text="Scheduled News" styleClass="field-label"/>
+                                <Label fx:id="scheduledNewsLabel" text="0"/>
+                            </VBox>
+                            <VBox spacing="5">
+                                <Label text="Urgent Alerts" styleClass="field-label"/>
+                                <Label fx:id="urgentAlertsLabel" text="0"/>
+                            </VBox>
+                        </HBox>
+                    </VBox>
+                </TitledPane>
+
+            </VBox>
+        </ScrollPane>
+    </center>
+
+    <bottom>
+        <HBox spacing="10" alignment="CENTER_RIGHT">
+            <padding>
+                <Insets top="15" right="20" bottom="15" left="20"/>
+            </padding>
+            <Label fx:id="lastUpdatedLabel" text="Last updated: -"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="Export Report" onAction="#handleExportReport" styleClass="secondary-button"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>

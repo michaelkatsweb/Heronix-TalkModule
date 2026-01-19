@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.heronix.talkmodule.ui.controller.AlertManagementController"
+            styleClass="management-container">
+
+    <top>
+        <VBox styleClass="management-header">
+            <padding>
+                <Insets top="15" right="20" bottom="15" left="20"/>
+            </padding>
+            <Label text="Emergency Alert Management" styleClass="management-title"/>
+            <Label text="Create and manage campus-wide emergency alerts" styleClass="management-subtitle"/>
+        </VBox>
+    </top>
+
+    <center>
+        <SplitPane dividerPositions="0.5">
+            <!-- Create Alert Panel -->
+            <VBox styleClass="panel" spacing="15">
+                <padding>
+                    <Insets top="15" right="15" bottom="15" left="15"/>
+                </padding>
+
+                <Label text="Create New Alert" styleClass="panel-title"/>
+
+                <VBox spacing="5">
+                    <Label text="Alert Level" styleClass="field-label"/>
+                    <ComboBox fx:id="alertLevelCombo" maxWidth="Infinity"/>
+                </VBox>
+
+                <VBox spacing="5">
+                    <Label text="Alert Type" styleClass="field-label"/>
+                    <ComboBox fx:id="alertTypeCombo" maxWidth="Infinity"/>
+                </VBox>
+
+                <VBox spacing="5">
+                    <Label text="Title" styleClass="field-label"/>
+                    <TextField fx:id="alertTitleField" promptText="Alert title"/>
+                </VBox>
+
+                <VBox spacing="5" VBox.vgrow="ALWAYS">
+                    <Label text="Message" styleClass="field-label"/>
+                    <TextArea fx:id="alertMessageArea" promptText="Alert message" VBox.vgrow="ALWAYS"/>
+                </VBox>
+
+                <VBox spacing="5">
+                    <Label text="Instructions" styleClass="field-label"/>
+                    <TextArea fx:id="alertInstructionsArea" promptText="Instructions for staff" prefRowCount="3"/>
+                </VBox>
+
+                <HBox spacing="10">
+                    <CheckBox fx:id="requireAckCheckbox" text="Require acknowledgment"/>
+                    <CheckBox fx:id="playSoundCheckbox" text="Play sound alert" selected="true"/>
+                </HBox>
+
+                <HBox spacing="10">
+                    <Button text="🚨 Issue Emergency Alert" onAction="#handleIssueEmergency"
+                            styleClass="emergency-button" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                </HBox>
+
+                <HBox spacing="10">
+                    <Button text="Issue Alert" onAction="#handleIssueAlert"
+                            styleClass="primary-button" HBox.hgrow="ALWAYS"/>
+                    <Button text="All Clear" onAction="#handleAllClear"
+                            styleClass="success-button" HBox.hgrow="ALWAYS"/>
+                </HBox>
+            </VBox>
+
+            <!-- Active Alerts List -->
+            <VBox styleClass="panel" spacing="10">
+                <padding>
+                    <Insets top="15" right="15" bottom="15" left="15"/>
+                </padding>
+
+                <Label text="Active Alerts" styleClass="panel-title"/>
+
+                <ListView fx:id="activeAlertsListView" VBox.vgrow="ALWAYS"/>
+
+                <HBox spacing="10">
+                    <Button text="Cancel Selected" onAction="#handleCancelAlert" styleClass="secondary-button"/>
+                    <Button text="View History" onAction="#handleViewHistory" styleClass="secondary-button"/>
+                </HBox>
+            </VBox>
+        </SplitPane>
+    </center>
+
+</BorderPane>

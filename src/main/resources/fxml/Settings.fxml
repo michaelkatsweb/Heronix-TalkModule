@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.heronix.talkmodule.ui.controller.SettingsController"
+            styleClass="management-container">
+
+    <top>
+        <VBox styleClass="management-header">
+            <padding>
+                <Insets top="15" right="20" bottom="15" left="20"/>
+            </padding>
+            <Label text="Settings" styleClass="management-title"/>
+            <Label text="Configure your TalkModule preferences" styleClass="management-subtitle"/>
+        </VBox>
+    </top>
+
+    <center>
+        <ScrollPane fitToWidth="true">
+            <VBox spacing="20">
+                <padding>
+                    <Insets top="20" right="20" bottom="20" left="20"/>
+                </padding>
+
+                <!-- Connection Settings -->
+                <TitledPane text="Connection" expanded="true">
+                    <VBox spacing="15">
+                        <padding>
+                            <Insets top="15" right="15" bottom="15" left="15"/>
+                        </padding>
+                        <VBox spacing="5">
+                            <Label text="Server URL" styleClass="field-label"/>
+                            <TextField fx:id="serverUrlField" promptText="https://server.heronix.com"/>
+                        </VBox>
+                        <CheckBox fx:id="autoConnectCheckbox" text="Auto-connect on startup"/>
+                        <CheckBox fx:id="reconnectCheckbox" text="Auto-reconnect on connection loss"/>
+                    </VBox>
+                </TitledPane>
+
+                <!-- Notification Settings -->
+                <TitledPane text="Notifications" expanded="true">
+                    <VBox spacing="15">
+                        <padding>
+                            <Insets top="15" right="15" bottom="15" left="15"/>
+                        </padding>
+                        <CheckBox fx:id="soundNotificationsCheckbox" text="Enable sound notifications"/>
+                        <CheckBox fx:id="desktopNotificationsCheckbox" text="Enable desktop notifications"/>
+                        <CheckBox fx:id="urgentOnlyCheckbox" text="Only notify for urgent messages"/>
+                        <VBox spacing="5">
+                            <Label text="Notification Sound" styleClass="field-label"/>
+                            <ComboBox fx:id="notificationSoundCombo" maxWidth="Infinity"/>
+                        </VBox>
+                    </VBox>
+                </TitledPane>
+
+                <!-- Appearance Settings -->
+                <TitledPane text="Appearance" expanded="true">
+                    <VBox spacing="15">
+                        <padding>
+                            <Insets top="15" right="15" bottom="15" left="15"/>
+                        </padding>
+                        <VBox spacing="5">
+                            <Label text="Theme" styleClass="field-label"/>
+                            <ComboBox fx:id="themeCombo" maxWidth="Infinity"/>
+                        </VBox>
+                        <VBox spacing="5">
+                            <Label text="Font Size" styleClass="field-label"/>
+                            <Slider fx:id="fontSizeSlider" min="10" max="20" value="14" showTickLabels="true" showTickMarks="true"/>
+                        </VBox>
+                        <CheckBox fx:id="compactModeCheckbox" text="Compact message view"/>
+                    </VBox>
+                </TitledPane>
+
+                <!-- Data Settings -->
+                <TitledPane text="Data and Storage" expanded="false">
+                    <VBox spacing="15">
+                        <padding>
+                            <Insets top="15" right="15" bottom="15" left="15"/>
+                        </padding>
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                            <Label text="Local storage used:" styleClass="field-label"/>
+                            <Label fx:id="storageUsedLabel" text="0 MB"/>
+                        </HBox>
+                        <Button text="Clear Message Cache" onAction="#handleClearCache" styleClass="secondary-button"/>
+                        <Button text="Export Data" onAction="#handleExportData" styleClass="secondary-button"/>
+                    </VBox>
+                </TitledPane>
+
+            </VBox>
+        </ScrollPane>
+    </center>
+
+    <bottom>
+        <HBox spacing="10" alignment="CENTER_RIGHT">
+            <padding>
+                <Insets top="15" right="20" bottom="15" left="20"/>
+            </padding>
+            <Button text="Reset to Defaults" onAction="#handleResetDefaults" styleClass="secondary-button"/>
+            <Button text="Save Settings" onAction="#handleSaveSettings" styleClass="primary-button"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>

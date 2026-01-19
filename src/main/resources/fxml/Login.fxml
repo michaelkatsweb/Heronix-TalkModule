@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.heronix.talkmodule.ui.controller.LoginController"
+      alignment="CENTER"
+      spacing="20"
+      styleClass="login-container">
+
+    <padding>
+        <Insets top="40" right="40" bottom="40" left="40"/>
+    </padding>
+
+    <!-- Logo/Title -->
+    <VBox alignment="CENTER" spacing="5">
+        <Label text="HERONIX" styleClass="app-title"/>
+        <Label text="TalkModule" styleClass="app-subtitle"/>
+        <Label text="Offline-First Communication" styleClass="app-tagline"/>
+    </VBox>
+
+    <!-- Login Form -->
+    <VBox spacing="15" maxWidth="300">
+        <VBox spacing="5">
+            <Label text="Username" styleClass="field-label"/>
+            <TextField fx:id="usernameField" promptText="Enter username" styleClass="login-field"/>
+        </VBox>
+
+        <VBox spacing="5">
+            <Label text="Password" styleClass="field-label"/>
+            <PasswordField fx:id="passwordField" promptText="Enter password" styleClass="login-field"/>
+        </VBox>
+
+        <VBox fx:id="serverUrlContainer" spacing="5">
+            <Label text="Server URL" styleClass="field-label"/>
+            <HBox spacing="10">
+                <TextField fx:id="serverUrlField" promptText="http://localhost:9680" styleClass="login-field" HBox.hgrow="ALWAYS"/>
+                <Button text="Check" onAction="#handleCheckServer" styleClass="secondary-button"/>
+            </HBox>
+        </VBox>
+
+        <HBox spacing="20">
+            <CheckBox fx:id="rememberMeCheckbox" text="Remember me" styleClass="checkbox"/>
+            <CheckBox fx:id="offlineModeCheckbox" text="Offline mode" styleClass="checkbox"/>
+        </HBox>
+
+        <Button fx:id="loginButton" text="Login" onAction="#handleLogin"
+                styleClass="primary-button" maxWidth="Infinity"/>
+
+        <ProgressIndicator fx:id="progressIndicator" visible="false" maxWidth="30" maxHeight="30"/>
+
+        <Label fx:id="statusLabel" styleClass="status-label" wrapText="true" alignment="CENTER"/>
+    </VBox>
+
+    <!-- Footer -->
+    <VBox alignment="CENTER" spacing="5">
+        <Separator/>
+        <Label text="Heronix Philosophy: Offline First, No Web Dependencies" styleClass="footer-text"/>
+    </VBox>
+
+</VBox>

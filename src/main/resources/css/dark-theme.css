@@ -1,0 +1,518 @@
+/* ============================================
+   Heronix TalkModule - Dark Theme
+   ============================================ */
+
+/* Root Variables */
+.root {
+    -fx-base: #1e1e1e;
+    -fx-background: #121212;
+    -fx-control-inner-background: #2d2d2d;
+    -fx-accent: #2196F3;
+    -fx-focus-color: #2196F3;
+    -fx-faint-focus-color: transparent;
+
+    /* Custom colors */
+    -heronix-primary: #2196F3;
+    -heronix-secondary: #424242;
+    -heronix-success: #4CAF50;
+    -heronix-warning: #FFC107;
+    -heronix-danger: #f44336;
+    -heronix-text: #e0e0e0;
+    -heronix-text-muted: #9E9E9E;
+    -heronix-border: #333333;
+    -heronix-sidebar: #1a1a1a;
+}
+
+/* ============================================
+   Login Screen
+   ============================================ */
+
+.login-container {
+    -fx-background-color: linear-gradient(to bottom, #1a1a2e, #16213e);
+}
+
+.app-title {
+    -fx-font-size: 36px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2196F3;
+}
+
+.app-subtitle {
+    -fx-font-size: 24px;
+    -fx-text-fill: #e0e0e0;
+}
+
+.app-tagline {
+    -fx-font-size: 12px;
+    -fx-text-fill: #9E9E9E;
+}
+
+.field-label {
+    -fx-text-fill: #e0e0e0;
+    -fx-font-size: 12px;
+}
+
+.login-field {
+    -fx-background-color: #2d2d2d;
+    -fx-text-fill: #e0e0e0;
+    -fx-prompt-text-fill: #757575;
+    -fx-border-color: #424242;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-padding: 10px;
+}
+
+.login-field:focused {
+    -fx-border-color: #2196F3;
+}
+
+.checkbox {
+    -fx-text-fill: #e0e0e0;
+}
+
+.checkbox .box {
+    -fx-background-color: #2d2d2d;
+    -fx-border-color: #424242;
+}
+
+.status-label {
+    -fx-text-fill: #9E9E9E;
+    -fx-font-size: 12px;
+}
+
+.footer-text {
+    -fx-text-fill: #616161;
+    -fx-font-size: 10px;
+}
+
+/* ============================================
+   Buttons
+   ============================================ */
+
+.primary-button {
+    -fx-background-color: #2196F3;
+    -fx-text-fill: white;
+    -fx-padding: 10px 20px;
+    -fx-background-radius: 4px;
+    -fx-cursor: hand;
+}
+
+.primary-button:hover {
+    -fx-background-color: #1976D2;
+}
+
+.secondary-button {
+    -fx-background-color: #424242;
+    -fx-text-fill: white;
+    -fx-padding: 8px 16px;
+    -fx-background-radius: 4px;
+    -fx-cursor: hand;
+}
+
+.secondary-button:hover {
+    -fx-background-color: #616161;
+}
+
+.success-button {
+    -fx-background-color: #4CAF50;
+    -fx-text-fill: white;
+    -fx-padding: 10px 20px;
+    -fx-background-radius: 4px;
+    -fx-cursor: hand;
+}
+
+.success-button:hover {
+    -fx-background-color: #388E3C;
+}
+
+.danger-button {
+    -fx-background-color: #f44336;
+    -fx-text-fill: white;
+    -fx-padding: 8px 16px;
+    -fx-background-radius: 4px;
+    -fx-cursor: hand;
+}
+
+.danger-button:hover {
+    -fx-background-color: #D32F2F;
+}
+
+.emergency-button {
+    -fx-background-color: #D32F2F;
+    -fx-text-fill: white;
+    -fx-padding: 12px 24px;
+    -fx-background-radius: 4px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+.emergency-button:hover {
+    -fx-background-color: #B71C1C;
+}
+
+.icon-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #e0e0e0;
+    -fx-padding: 5px 10px;
+    -fx-cursor: hand;
+}
+
+.icon-button:hover {
+    -fx-background-color: #424242;
+    -fx-background-radius: 4px;
+}
+
+.admin-button {
+    -fx-background-color: #2d2d2d;
+    -fx-text-fill: #e0e0e0;
+    -fx-padding: 8px 12px;
+    -fx-background-radius: 4px;
+    -fx-alignment: CENTER_LEFT;
+    -fx-cursor: hand;
+}
+
+.admin-button:hover {
+    -fx-background-color: #424242;
+}
+
+/* ============================================
+   Main Layout
+   ============================================ */
+
+.main-container {
+    -fx-background-color: #121212;
+}
+
+.header {
+    -fx-background-color: #1a1a1a;
+    -fx-border-color: #333333;
+    -fx-border-width: 0 0 1px 0;
+}
+
+.header-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2196F3;
+}
+
+.connection-status {
+    -fx-font-size: 12px;
+}
+
+.user-name {
+    -fx-text-fill: #e0e0e0;
+    -fx-font-size: 14px;
+}
+
+.unread-badge {
+    -fx-background-color: #f44336;
+    -fx-text-fill: white;
+    -fx-padding: 2px 8px;
+    -fx-background-radius: 10px;
+    -fx-font-size: 11px;
+}
+
+/* ============================================
+   Sidebar
+   ============================================ */
+
+.sidebar {
+    -fx-background-color: #1a1a1a;
+    -fx-border-color: #333333;
+    -fx-border-width: 0 1px 0 0;
+}
+
+.sidebar-title {
+    -fx-text-fill: #9E9E9E;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.channel-list {
+    -fx-background-color: transparent;
+}
+
+.channel-list .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: #e0e0e0;
+    -fx-padding: 8px 12px;
+}
+
+.channel-list .list-cell:hover {
+    -fx-background-color: #2d2d2d;
+}
+
+.channel-list .list-cell:selected {
+    -fx-background-color: #2196F3;
+    -fx-text-fill: white;
+}
+
+.admin-panel {
+    -fx-padding: 10px 0 0 0;
+}
+
+/* ============================================
+   Chat Area
+   ============================================ */
+
+.chat-area {
+    -fx-background-color: #121212;
+}
+
+.channel-header {
+    -fx-background-color: #1a1a1a;
+    -fx-border-color: #333333;
+    -fx-border-width: 0 0 1px 0;
+}
+
+.channel-name {
+    -fx-text-fill: #e0e0e0;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.member-count {
+    -fx-text-fill: #9E9E9E;
+    -fx-font-size: 12px;
+}
+
+.message-list {
+    -fx-background-color: #121212;
+}
+
+.message-list .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: #e0e0e0;
+    -fx-padding: 8px 12px;
+}
+
+.message-list .list-cell:hover {
+    -fx-background-color: #1a1a1a;
+}
+
+.message-input-container {
+    -fx-background-color: #1a1a1a;
+    -fx-border-color: #333333;
+    -fx-border-width: 1px 0 0 0;
+}
+
+.message-input {
+    -fx-background-color: #2d2d2d;
+    -fx-text-fill: #e0e0e0;
+    -fx-prompt-text-fill: #757575;
+    -fx-border-color: #424242;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+}
+
+.send-button {
+    -fx-background-color: #2196F3;
+    -fx-text-fill: white;
+    -fx-padding: 10px 20px;
+    -fx-background-radius: 4px;
+}
+
+/* ============================================
+   Alert Banner
+   ============================================ */
+
+.alert-banner {
+    -fx-background-color: #D32F2F;
+    -fx-padding: 10px 20px;
+}
+
+.alert-banner-text {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.alert-dismiss-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-cursor: hand;
+}
+
+/* ============================================
+   Management Screens
+   ============================================ */
+
+.management-container {
+    -fx-background-color: #121212;
+}
+
+.management-header {
+    -fx-background-color: #1a1a1a;
+    -fx-border-color: #333333;
+    -fx-border-width: 0 0 1px 0;
+}
+
+.management-title {
+    -fx-text-fill: #e0e0e0;
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+}
+
+.management-subtitle {
+    -fx-text-fill: #9E9E9E;
+    -fx-font-size: 12px;
+}
+
+.panel {
+    -fx-background-color: #1a1a1a;
+    -fx-border-color: #333333;
+    -fx-border-width: 1px;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+}
+
+.panel-title {
+    -fx-text-fill: #e0e0e0;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+/* ============================================
+   Form Controls
+   ============================================ */
+
+.text-field, .text-area, .combo-box {
+    -fx-background-color: #2d2d2d;
+    -fx-text-fill: #e0e0e0;
+    -fx-prompt-text-fill: #757575;
+    -fx-border-color: #424242;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+}
+
+.text-field:focused, .text-area:focused {
+    -fx-border-color: #2196F3;
+}
+
+.combo-box .list-cell {
+    -fx-text-fill: #e0e0e0;
+    -fx-background-color: #2d2d2d;
+}
+
+.combo-box-popup .list-view {
+    -fx-background-color: #2d2d2d;
+}
+
+.combo-box-popup .list-cell:hover {
+    -fx-background-color: #424242;
+}
+
+.date-picker {
+    -fx-background-color: #2d2d2d;
+}
+
+.date-picker .text-field {
+    -fx-text-fill: #e0e0e0;
+}
+
+/* ============================================
+   Split Pane
+   ============================================ */
+
+.split-pane {
+    -fx-background-color: #121212;
+}
+
+.split-pane-divider {
+    -fx-background-color: #333333;
+    -fx-padding: 0 2px;
+}
+
+/* ============================================
+   Titled Pane
+   ============================================ */
+
+.titled-pane {
+    -fx-text-fill: #e0e0e0;
+}
+
+.titled-pane > .title {
+    -fx-background-color: #2d2d2d;
+}
+
+.titled-pane > .content {
+    -fx-background-color: #1a1a1a;
+}
+
+/* ============================================
+   Scroll Bars
+   ============================================ */
+
+.scroll-bar {
+    -fx-background-color: #1a1a1a;
+}
+
+.scroll-bar .thumb {
+    -fx-background-color: #424242;
+    -fx-background-radius: 4px;
+}
+
+.scroll-bar .thumb:hover {
+    -fx-background-color: #616161;
+}
+
+.scroll-bar .increment-button, .scroll-bar .decrement-button {
+    -fx-background-color: transparent;
+}
+
+/* ============================================
+   Menu
+   ============================================ */
+
+.menu-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #e0e0e0;
+}
+
+.context-menu {
+    -fx-background-color: #2d2d2d;
+    -fx-border-color: #424242;
+}
+
+.menu-item {
+    -fx-background-color: transparent;
+}
+
+.menu-item .label {
+    -fx-text-fill: #e0e0e0;
+}
+
+.menu-item:hover {
+    -fx-background-color: #424242;
+}
+
+/* ============================================
+   Separator
+   ============================================ */
+
+.separator .line {
+    -fx-border-color: #333333;
+}
+
+/* ============================================
+   Progress Indicator
+   ============================================ */
+
+.progress-indicator .indicator {
+    -fx-border-color: #2196F3;
+}
+
+/* ============================================
+   Toggle Button
+   ============================================ */
+
+.toggle-button {
+    -fx-background-color: #2d2d2d;
+    -fx-text-fill: #e0e0e0;
+    -fx-padding: 5px 10px;
+    -fx-background-radius: 4px;
+}
+
+.toggle-button:selected {
+    -fx-background-color: #2196F3;
+    -fx-text-fill: white;
+}
