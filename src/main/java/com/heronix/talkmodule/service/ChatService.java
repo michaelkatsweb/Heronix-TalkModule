@@ -53,11 +53,21 @@ public class ChatService {
     @Transactional
     public void loadChannels() {
         if (sessionManager.isConnected()) {
-            // Fetch from server and cache locally
-            List<ChannelDTO> serverChannels = serverClient.getMyChannels();
-            for (ChannelDTO dto : serverChannels) {
+            // Fetch user's channels (memberships) from server
+            List<ChannelDTO> myChannels = serverClient.getMyChannels();
+            for (ChannelDTO dto : myChannels) {
                 LocalChannel local = convertToLocalChannel(dto);
                 channelRepository.save(local);
+            }
+
+            // Also fetch public channels (in case auto-join hasn't happened yet)
+            List<ChannelDTO> publicChannels = serverClient.getPublicChannels();
+            for (ChannelDTO dto : publicChannels) {
+                // Only save if not already in local cache
+                if (channelRepository.findById(dto.getId()).isEmpty()) {
+                    LocalChannel local = convertToLocalChannel(dto);
+                    channelRepository.save(local);
+                }
             }
         }
 
