@@ -15,6 +15,8 @@ import javafx.collections.ObservableList;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,6 +40,11 @@ public class ChatService {
     private final LocalMessageRepository messageRepository;
     private final TalkServerClient serverClient;
     private final SessionManager sessionManager;
+
+    // Use @Lazy to break circular dependency (WebSocketService -> ChatService -> WebSocketService)
+    @Autowired
+    @Lazy
+    private WebSocketService webSocketService;
 
     @Getter
     private final ObservableList<LocalChannel> channels = FXCollections.observableArrayList();
@@ -83,12 +90,15 @@ public class ChatService {
 
     public void selectChannel(LocalChannel channel) {
         this.selectedChannel = channel;
-        loadChannelMessages(channel.getId());
 
-        // Join channel via WebSocket if connected
-        if (sessionManager.isConnected()) {
-            // WebSocket join handled elsewhere
+        // Subscribe to channel via WebSocket for real-time updates
+        // This is critical for DMs and private channels
+        if (sessionManager.isConnected() && webSocketService != null) {
+            webSocketService.joinChannel(channel.getId());
+            log.debug("Subscribed to channel {} for real-time updates", channel.getId());
         }
+
+        loadChannelMessages(channel.getId());
     }
 
     @Transactional
@@ -192,15 +202,42 @@ public class ChatService {
         return Optional.of(localMessage);
     }
 
+    @Transactional
     public void receiveMessage(MessageDTO messageDto) {
         // Handle incoming message from WebSocket
-        if (messageRepository.findByMessageUuid(messageDto.getMessageUuid()).isEmpty()) {
+        String msgUuid = messageDto.getMessageUuid();
+
+        // Check for duplicates by UUID or server ID
+        boolean exists = false;
+        if (msgUuid != null && !msgUuid.isEmpty()) {
+            exists = messageRepository.findByMessageUuid(msgUuid).isPresent();
+        } else if (messageDto.getId() != null) {
+            exists = messageRepository.findByServerId(messageDto.getId()).isPresent();
+        }
+
+        if (!exists) {
             LocalMessage local = convertToLocalMessage(messageDto);
             local.setSyncStatus(SyncStatus.SYNCED);
             messageRepository.save(local);
 
+            log.info("Received message: id={}, channelId={}, content={}",
+                    messageDto.getId(), messageDto.getChannelId(),
+                    messageDto.getContent() != null ?
+                            messageDto.getContent().substring(0, Math.min(50, messageDto.getContent().length())) : "null");
+
             if (selectedChannel != null && selectedChannel.getId().equals(messageDto.getChannelId())) {
                 Platform.runLater(() -> currentMessages.add(local));
+            } else {
+                // Update unread count for other channels
+                channelRepository.findById(messageDto.getChannelId()).ifPresent(channel -> {
+                    channel.setUnreadCount(channel.getUnreadCount() + 1);
+                    channelRepository.save(channel);
+                    Platform.runLater(() -> channels.forEach(c -> {
+                        if (c.getId().equals(channel.getId())) {
+                            c.setUnreadCount(channel.getUnreadCount());
+                        }
+                    }));
+                });
             }
         }
     }

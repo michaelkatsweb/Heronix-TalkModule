@@ -4,6 +4,7 @@ import com.heronix.talkmodule.HeronixTalkModuleApplication;
 import com.heronix.talkmodule.model.dto.AuthResponseDTO;
 import com.heronix.talkmodule.network.TalkServerClient;
 import com.heronix.talkmodule.service.SessionManager;
+import com.heronix.talkmodule.service.WebSocketService;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -30,6 +31,7 @@ public class LoginController {
 
     private final TalkServerClient serverClient;
     private final SessionManager sessionManager;
+    private final WebSocketService webSocketService;
 
     @Value("${heronix.server.url:http://localhost:9680}")
     private String defaultServerUrl;
@@ -113,6 +115,8 @@ public class LoginController {
                     Platform.runLater(() -> {
                         if (response.isPresent() && response.get().isSuccess()) {
                             sessionManager.createSession(response.get(), serverUrl, rememberMe);
+                            // Connect WebSocket for real-time messaging
+                            connectWebSocket(serverUrl);
                             openMainWindow();
                         } else {
                             String message = response.map(AuthResponseDTO::getMessage)
@@ -183,6 +187,22 @@ public class LoginController {
             log.error("Error opening main window", e);
             showError("Error loading application: " + e.getMessage());
         }
+    }
+
+    private void connectWebSocket(String serverUrl) {
+        // Connect WebSocket in background - don't block UI
+        webSocketService.connect(serverUrl)
+                .thenAccept(connected -> {
+                    if (connected) {
+                        log.info("WebSocket connected successfully");
+                    } else {
+                        log.warn("WebSocket connection failed, real-time messaging unavailable");
+                    }
+                })
+                .exceptionally(e -> {
+                    log.error("WebSocket connection error", e);
+                    return null;
+                });
     }
 
     private void setLoading(boolean loading) {

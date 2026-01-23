@@ -207,4 +207,24 @@ public class NewsManagementService {
     public long getActiveNewsCount() {
         return newsRepository.countByActiveTrue();
     }
+
+    /**
+     * Receive a news item from WebSocket broadcast.
+     * Converts DTO to local entity and adds to the observable list.
+     */
+    @Transactional
+    public void receiveNewsItem(NewsItemDTO dto) {
+        // Check if already exists
+        if (dto.getId() != null && newsRepository.findByServerId(dto.getId()).isPresent()) {
+            log.debug("News item {} already exists locally", dto.getId());
+            return;
+        }
+
+        LocalNewsItem local = convertToLocalNews(dto);
+        local.setSyncStatus(SyncStatus.SYNCED);
+        newsRepository.save(local);
+
+        Platform.runLater(() -> newsItems.add(0, local));
+        log.info("Received news from WebSocket: {}", dto.getHeadline());
+    }
 }

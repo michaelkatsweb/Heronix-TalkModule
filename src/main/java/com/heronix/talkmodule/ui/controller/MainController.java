@@ -207,6 +207,7 @@ public class MainController {
     }
 
     private void showAlertBanner(EmergencyAlert alert) {
+        // Show persistent banner
         alertBanner.setVisible(true);
         alertBanner.setManaged(true);
         alertBannerText.setText("⚠ " + alert.getTitle() + ": " + alert.getMessage());
@@ -218,6 +219,80 @@ public class MainController {
             default -> "-fx-background-color: #1976D2;";
         };
         alertBanner.setStyle(style);
+
+        // For critical alerts (EMERGENCY or URGENT), show a modal dialog
+        if (alert.getAlertLevel() == com.heronix.talkmodule.model.enums.AlertLevel.EMERGENCY ||
+            alert.getAlertLevel() == com.heronix.talkmodule.model.enums.AlertLevel.URGENT) {
+            showCriticalAlertDialog(alert);
+        }
+    }
+
+    /**
+     * Show a modal dialog for critical emergency alerts
+     */
+    private void showCriticalAlertDialog(EmergencyAlert alert) {
+        Platform.runLater(() -> {
+            Alert.AlertType alertType = alert.getAlertLevel() == com.heronix.talkmodule.model.enums.AlertLevel.EMERGENCY
+                    ? Alert.AlertType.ERROR
+                    : Alert.AlertType.WARNING;
+
+            Alert alertDialog = new Alert(alertType);
+            alertDialog.setTitle(alert.getAlertLevel() + " ALERT");
+            alertDialog.setHeaderText(getAlertIcon(alert.getAlertType()) + " " + alert.getTitle());
+
+            // Build content text
+            StringBuilder content = new StringBuilder();
+            content.append(alert.getMessage());
+
+            if (alert.getInstructions() != null && !alert.getInstructions().isEmpty()) {
+                content.append("\n\n📋 Instructions:\n").append(alert.getInstructions());
+            }
+            if (alert.getIssuedByName() != null) {
+                content.append("\n\nIssued by: ").append(alert.getIssuedByName());
+            }
+
+            alertDialog.setContentText(content.toString());
+
+            // Style the dialog for critical alerts
+            alertDialog.getDialogPane().setStyle(
+                    "-fx-background-color: #ffebee; " +
+                    "-fx-border-color: " + (alert.getAlertLevel() == com.heronix.talkmodule.model.enums.AlertLevel.EMERGENCY ? "#f44336" : "#ff9800") + "; " +
+                    "-fx-border-width: 3px;"
+            );
+
+            // Add acknowledge button if required
+            if (alert.isRequiresAcknowledgment()) {
+                ButtonType acknowledgeBtn = new ButtonType("Acknowledge", ButtonBar.ButtonData.OK_DONE);
+                alertDialog.getButtonTypes().setAll(acknowledgeBtn);
+
+                alertDialog.showAndWait().ifPresent(response -> {
+                    if (response == acknowledgeBtn && alert.getLocalId() != null) {
+                        alertService.acknowledgeAlert(alert.getLocalId());
+                    }
+                });
+            } else {
+                alertDialog.show();
+            }
+        });
+    }
+
+    /**
+     * Get icon for alert type
+     */
+    private String getAlertIcon(com.heronix.talkmodule.model.enums.AlertType alertType) {
+        if (alertType == null) return "⚠️";
+        return switch (alertType) {
+            case LOCKDOWN -> "🔒";
+            case FIRE -> "🔥";
+            case WEATHER -> "🌪️";
+            case MEDICAL -> "🏥";
+            case EVACUATION -> "🚨";
+            case SHELTER -> "🏠";
+            case ALL_CLEAR -> "✅";
+            case ANNOUNCEMENT -> "📢";
+            case SCHEDULE_CHANGE -> "📅";
+            default -> "⚠️";
+        };
     }
 
     @FXML
