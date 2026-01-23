@@ -8,7 +8,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URI;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 /**
@@ -22,10 +28,25 @@ public class WebSocketClient extends org.java_websocket.client.WebSocketClient {
     private final CopyOnWriteArrayList<Consumer<WebSocketMessageDTO>> messageListeners = new CopyOnWriteArrayList<>();
     private final CopyOnWriteArrayList<Consumer<Boolean>> connectionListeners = new CopyOnWriteArrayList<>();
 
-    private boolean reconnecting = false;
+    private volatile boolean reconnecting = false;
+    private volatile boolean shouldReconnect = true;
     private int reconnectAttempts = 0;
-    private static final int MAX_RECONNECT_ATTEMPTS = 5;
-    private static final int RECONNECT_DELAY_MS = 3000;
+    private static final int MAX_RECONNECT_ATTEMPTS = 10;
+    private static final int BASE_RECONNECT_DELAY_MS = 1000;
+    private static final int MAX_RECONNECT_DELAY_MS = 60000;
+    private static final int HEARTBEAT_INTERVAL_MS = 30000;
+
+    // Scheduled executor for reconnection and heartbeat
+    private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor(r -> {
+        Thread t = new Thread(r, "talkmodule-ws-scheduler");
+        t.setDaemon(true);
+        return t;
+    });
+    private ScheduledFuture<?> heartbeatTask;
+    private volatile long lastPongTime = System.currentTimeMillis();
+
+    // Queue for pending messages during reconnection
+    private final BlockingQueue<WebSocketMessageDTO> pendingMessages = new LinkedBlockingQueue<>(100);
 
     public WebSocketClient(URI serverUri, ObjectMapper objectMapper) {
         super(serverUri);
@@ -38,6 +59,8 @@ public class WebSocketClient extends org.java_websocket.client.WebSocketClient {
         reconnecting = false;
         reconnectAttempts = 0;
         notifyConnectionListeners(true);
+        startHeartbeat();
+        flushPendingMessages();
     }
 
     @Override
@@ -65,10 +88,11 @@ public class WebSocketClient extends org.java_websocket.client.WebSocketClient {
     @Override
     public void onClose(int code, String reason, boolean remote) {
         log.info("WebSocket connection closed: code={}, reason={}, remote={}", code, reason, remote);
+        stopHeartbeat();
         notifyConnectionListeners(false);
 
-        // Attempt reconnection if it was unexpected
-        if (remote && !reconnecting && reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
+        // Attempt reconnection if it was unexpected and we should reconnect
+        if (remote && shouldReconnect && !reconnecting && reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
             scheduleReconnect();
         }
     }
@@ -79,20 +103,84 @@ public class WebSocketClient extends org.java_websocket.client.WebSocketClient {
     }
 
     private void scheduleReconnect() {
+        if (!shouldReconnect || reconnectAttempts >= MAX_RECONNECT_ATTEMPTS) {
+            log.warn("Max reconnect attempts reached ({}) or reconnect disabled", reconnectAttempts);
+            return;
+        }
+
         reconnecting = true;
         reconnectAttempts++;
-        log.info("Scheduling reconnect attempt {} of {}", reconnectAttempts, MAX_RECONNECT_ATTEMPTS);
 
-        new Thread(() -> {
-            try {
-                Thread.sleep(RECONNECT_DELAY_MS);
-                if (reconnecting) {
+        // Exponential backoff with jitter
+        int delayMs = Math.min(BASE_RECONNECT_DELAY_MS * (1 << reconnectAttempts), MAX_RECONNECT_DELAY_MS);
+        delayMs += (int) (Math.random() * 1000); // Add jitter
+
+        log.info("Scheduling reconnect attempt {} of {} in {}ms", reconnectAttempts, MAX_RECONNECT_ATTEMPTS, delayMs);
+
+        scheduler.schedule(() -> {
+            if (reconnecting && shouldReconnect) {
+                try {
                     reconnect();
+                } catch (Exception e) {
+                    log.error("Reconnection failed", e);
+                    scheduleReconnect();
                 }
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
             }
-        }).start();
+        }, delayMs, TimeUnit.MILLISECONDS);
+    }
+
+    /**
+     * Start heartbeat to detect stale connections
+     */
+    private void startHeartbeat() {
+        stopHeartbeat();
+        lastPongTime = System.currentTimeMillis();
+
+        heartbeatTask = scheduler.scheduleAtFixedRate(() -> {
+            if (isOpen()) {
+                // Check if connection is stale
+                long timeSinceLastPong = System.currentTimeMillis() - lastPongTime;
+                if (timeSinceLastPong > HEARTBEAT_INTERVAL_MS * 2) {
+                    log.warn("Connection appears stale (no pong in {}ms), forcing reconnect", timeSinceLastPong);
+                    try {
+                        closeConnection(1000, "Stale connection");
+                    } catch (Exception e) {
+                        log.debug("Error closing stale connection: {}", e.getMessage());
+                    }
+                    return;
+                }
+
+                // Send ping
+                sendPing();
+            }
+        }, HEARTBEAT_INTERVAL_MS, HEARTBEAT_INTERVAL_MS, TimeUnit.MILLISECONDS);
+    }
+
+    private void stopHeartbeat() {
+        if (heartbeatTask != null && !heartbeatTask.isCancelled()) {
+            heartbeatTask.cancel(false);
+            heartbeatTask = null;
+        }
+    }
+
+    @Override
+    public void onWebsocketPong(org.java_websocket.WebSocket conn, org.java_websocket.framing.Framedata f) {
+        lastPongTime = System.currentTimeMillis();
+    }
+
+    /**
+     * Flush pending messages after reconnection
+     */
+    private void flushPendingMessages() {
+        if (pendingMessages.isEmpty()) return;
+
+        log.info("Flushing {} pending messages", pendingMessages.size());
+        scheduler.execute(() -> {
+            WebSocketMessageDTO msg;
+            while ((msg = pendingMessages.poll()) != null && isOpen()) {
+                sendMessage(msg);
+            }
+        });
     }
 
     public void addMessageListener(Consumer<WebSocketMessageDTO> listener) {
@@ -124,11 +212,28 @@ public class WebSocketClient extends org.java_websocket.client.WebSocketClient {
     }
 
     public void sendMessage(WebSocketMessageDTO message) {
+        if (!isOpen()) {
+            // Queue message for later delivery
+            if ("MESSAGE".equals(message.getType())) {
+                if (pendingMessages.offer(message)) {
+                    log.debug("Message queued for later delivery (queue size: {})", pendingMessages.size());
+                } else {
+                    log.warn("Pending message queue full, message dropped");
+                }
+            }
+            log.warn("Cannot send message: WebSocket not connected");
+            return;
+        }
+
         try {
             String json = objectMapper.writeValueAsString(message);
             send(json);
         } catch (Exception e) {
             log.error("Error sending WebSocket message", e);
+            // Queue for retry if it's a chat message
+            if ("MESSAGE".equals(message.getType())) {
+                pendingMessages.offer(message);
+            }
         }
     }
 
@@ -177,5 +282,45 @@ public class WebSocketClient extends org.java_websocket.client.WebSocketClient {
 
     public void cancelReconnect() {
         reconnecting = false;
+        shouldReconnect = false;
     }
+
+    /**
+     * Gracefully shutdown the WebSocket client
+     */
+    public void shutdown() {
+        log.info("Shutting down WebSocket client...");
+        shouldReconnect = false;
+        reconnecting = false;
+        stopHeartbeat();
+        pendingMessages.clear();
+
+        if (isOpen()) {
+            try {
+                closeBlocking();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+
+        scheduler.shutdown();
+        try {
+            if (!scheduler.awaitTermination(5, TimeUnit.SECONDS)) {
+                scheduler.shutdownNow();
+            }
+        } catch (InterruptedException e) {
+            scheduler.shutdownNow();
+            Thread.currentThread().interrupt();
+        }
+        log.info("WebSocket client shutdown complete");
+    }
+
+    /**
+     * Get connection statistics for monitoring
+     */
+    public ConnectionStats getConnectionStats() {
+        return new ConnectionStats(isOpen(), reconnectAttempts, pendingMessages.size(), lastPongTime);
+    }
+
+    public record ConnectionStats(boolean connected, int reconnectAttempts, int pendingMessageCount, long lastPongTime) {}
 }
