@@ -352,4 +352,44 @@ public class ChatService {
         Long count = channelRepository.getTotalUnreadCount();
         return count != null ? count : 0;
     }
+
+    // ===================== Student Messaging Support =====================
+
+    /**
+     * Get all student users that can be messaged
+     */
+    public List<UserDTO> getStudentUsers() {
+        if (sessionManager.isConnected()) {
+            return serverClient.getStudentUsers();
+        }
+        return List.of();
+    }
+
+    /**
+     * Get DM channels with students
+     */
+    public List<ChannelDTO> getStudentDirectMessages() {
+        if (sessionManager.isConnected()) {
+            return serverClient.getStudentDirectMessages();
+        }
+        return List.of();
+    }
+
+    /**
+     * Check if a user is a student
+     */
+    public boolean isStudentUser(UserDTO user) {
+        return serverClient.isStudentUser(user);
+    }
+
+    /**
+     * Check if a channel is a conversation with a student
+     */
+    public boolean isStudentChannel(LocalChannel channel) {
+        if (channel == null) return false;
+        // Check if channel name contains "student" pattern
+        return channel.isDirectMessage() &&
+               channel.getName() != null &&
+               channel.getName().toLowerCase().contains("student");
+    }
 }

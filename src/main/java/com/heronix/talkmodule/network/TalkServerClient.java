@@ -341,4 +341,37 @@ public class TalkServerClient {
             return value;
         }
     }
+
+    // ===================== Student Messaging =====================
+
+    /**
+     * Get all users with STUDENT role
+     */
+    public List<UserDTO> getStudentUsers() {
+        List<UserDTO> allUsers = getUsers();
+        return allUsers.stream()
+                .filter(u -> u.getRole() == com.heronix.talkmodule.model.enums.UserRole.STUDENT)
+                .collect(java.util.stream.Collectors.toList());
+    }
+
+    /**
+     * Get DM channels with students
+     * Filters user's channels to find DMs that involve students (based on channel name pattern)
+     */
+    public List<ChannelDTO> getStudentDirectMessages() {
+        List<ChannelDTO> myChannels = getMyChannels();
+        // Filter DMs that involve students (based on channel name pattern or type)
+        return myChannels.stream()
+                .filter(ch -> ch.isDirectMessage() &&
+                        ch.getName() != null &&
+                        ch.getName().toLowerCase().contains("student"))
+                .collect(java.util.stream.Collectors.toList());
+    }
+
+    /**
+     * Check if a user is a student
+     */
+    public boolean isStudentUser(UserDTO user) {
+        return user != null && user.getRole() == com.heronix.talkmodule.model.enums.UserRole.STUDENT;
+    }
 }
