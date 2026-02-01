@@ -49,6 +49,7 @@ public class MainController {
     @FXML private Button newsButton;
     @FXML private Button usersButton;
     @FXML private Button analyticsButton;
+    @FXML private Button parentCommsButton;
 
     @FXML private HBox alertBanner;
     @FXML private Label alertBannerText;
@@ -338,6 +339,11 @@ public class MainController {
     @FXML
     private void handleOpenNews() {
         openWindow("/fxml/NewsManagement.fxml", "News Management", 900, 700);
+    }
+
+    @FXML
+    private void handleOpenParentComms() {
+        openWindow("/fxml/ParentCommunication.fxml", "Parent Communication Center", 1000, 750);
     }
 
     @FXML

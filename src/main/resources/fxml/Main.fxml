@@ -67,6 +67,8 @@
                         styleClass="admin-button" maxWidth="Infinity"/>
                 <Button fx:id="newsButton" text="📰 News Management" onAction="#handleOpenNews"
                         styleClass="admin-button" maxWidth="Infinity"/>
+                <Button fx:id="parentCommsButton" text="👨‍👩‍👧 Parent Communication" onAction="#handleOpenParentComms"
+                        styleClass="admin-button" maxWidth="Infinity"/>
                 <Button fx:id="usersButton" text="👥 User Management" onAction="#handleOpenUsers"
                         styleClass="admin-button" maxWidth="Infinity"/>
                 <Button fx:id="analyticsButton" text="📊 Analytics" onAction="#handleOpenAnalytics"

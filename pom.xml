@@ -91,6 +91,13 @@
             <scope>runtime</scope>
         </dependency>
 
+        <!-- PostgreSQL Database -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
         <!-- WebSocket Client -->
         <dependency>
             <groupId>org.java-websocket</groupId>
@@ -129,6 +136,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
+                    <mainClass>com.heronix.talkmodule.Launcher</mainClass>
                     <excludes>
                         <exclude>
                             <groupId>org.projectlombok</groupId>

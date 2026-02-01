@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.heronix.talkmodule.ui.controller.ParentCommunicationController"
+            styleClass="parent-comms-container">
+
+    <!-- Header -->
+    <top>
+        <VBox>
+            <HBox styleClass="page-header" alignment="CENTER_LEFT" spacing="15">
+                <padding>
+                    <Insets top="15" right="20" bottom="15" left="20"/>
+                </padding>
+                <Button text="← Back" onAction="#handleBack" styleClass="back-button"/>
+                <Label text="Parent Communication Center" styleClass="page-title"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label fx:id="serviceStatusLabel" text="● Service Available" styleClass="service-status"/>
+            </HBox>
+
+            <!-- Tab Bar -->
+            <HBox styleClass="tab-bar" spacing="0">
+                <Button fx:id="messageTabBtn" text="Send Message" onAction="#handleMessageTab"
+                        styleClass="tab-button, active"/>
+                <Button fx:id="historyTabBtn" text="Message History" onAction="#handleHistoryTab"
+                        styleClass="tab-button"/>
+                <Button fx:id="bulkTabBtn" text="Bulk Messaging" onAction="#handleBulkTab"
+                        styleClass="tab-button"/>
+                <Button fx:id="templatesTabBtn" text="Templates" onAction="#handleTemplatesTab"
+                        styleClass="tab-button"/>
+            </HBox>
+        </VBox>
+    </top>
+
+    <!-- Content Area -->
+    <center>
+        <StackPane fx:id="contentArea">
+            <!-- Send Message Panel (default view) -->
+            <VBox fx:id="messagePanel" styleClass="content-panel" spacing="20" visible="true">
+                <padding>
+                    <Insets top="20" right="30" bottom="20" left="30"/>
+                </padding>
+
+                <!-- Student Search Section -->
+                <VBox spacing="10">
+                    <Label text="Find Student" styleClass="section-title"/>
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <TextField fx:id="studentSearchField" promptText="Enter student name or ID..."
+                                   prefWidth="300" styleClass="search-field"/>
+                        <Button text="Search" onAction="#handleStudentSearch" styleClass="primary-button"/>
+                    </HBox>
+                </VBox>
+
+                <!-- Student Info Card -->
+                <VBox fx:id="studentInfoCard" styleClass="info-card" spacing="10" visible="false" managed="false">
+                    <HBox spacing="20" alignment="CENTER_LEFT">
+                        <VBox spacing="5" HBox.hgrow="ALWAYS">
+                            <Label fx:id="studentNameLabel" text="Student Name" styleClass="card-title"/>
+                            <Label fx:id="studentGradeLabel" text="Grade: --" styleClass="card-subtitle"/>
+                            <Label fx:id="studentIdLabel" text="ID: --" styleClass="card-detail"/>
+                        </VBox>
+                    </HBox>
+                </VBox>
+
+                <!-- Parent Selection -->
+                <VBox fx:id="parentSelectionBox" spacing="10" visible="false" managed="false">
+                    <Label text="Select Parent/Guardian" styleClass="section-title"/>
+                    <ListView fx:id="parentListView" prefHeight="150" styleClass="parent-list"/>
+                </VBox>
+
+                <!-- Message Composition -->
+                <VBox fx:id="messageCompositionBox" spacing="10" visible="false" managed="false">
+                    <Separator/>
+                    <Label text="Compose Message" styleClass="section-title"/>
+
+                    <HBox spacing="15">
+                        <VBox spacing="5" HBox.hgrow="ALWAYS">
+                            <Label text="Category"/>
+                            <ComboBox fx:id="categoryComboBox" maxWidth="Infinity" promptText="Select category">
+                                <items>
+                                    <fx:String fx:value="General"/>
+                                    <fx:String fx:value="Attendance"/>
+                                    <fx:String fx:value="Grades"/>
+                                    <fx:String fx:value="Behavior"/>
+                                    <fx:String fx:value="Health"/>
+                                    <fx:String fx:value="Calendar"/>
+                                    <fx:String fx:value="Emergency"/>
+                                </items>
+                            </ComboBox>
+                        </VBox>
+                        <VBox spacing="5" HBox.hgrow="ALWAYS">
+                            <Label text="Priority"/>
+                            <ComboBox fx:id="priorityComboBox" maxWidth="Infinity" promptText="Select priority">
+                                <items>
+                                    <fx:String fx:value="Low"/>
+                                    <fx:String fx:value="Normal"/>
+                                    <fx:String fx:value="High"/>
+                                    <fx:String fx:value="Urgent"/>
+                                </items>
+                            </ComboBox>
+                        </VBox>
+                    </HBox>
+
+                    <VBox spacing="5">
+                        <Label text="Subject"/>
+                        <TextField fx:id="subjectField" promptText="Enter message subject..." styleClass="input-field"/>
+                    </VBox>
+
+                    <VBox spacing="5" VBox.vgrow="ALWAYS">
+                        <Label text="Message"/>
+                        <TextArea fx:id="messageContentArea" promptText="Type your message here..."
+                                  prefRowCount="6" wrapText="true" VBox.vgrow="ALWAYS" styleClass="message-input"/>
+                    </VBox>
+
+                    <!-- Delivery Options -->
+                    <VBox spacing="10">
+                        <Label text="Delivery Options" styleClass="section-subtitle"/>
+                        <HBox spacing="20">
+                            <CheckBox fx:id="inAppCheckBox" text="In-App" selected="true"/>
+                            <CheckBox fx:id="pushCheckBox" text="Push Notification"/>
+                            <CheckBox fx:id="emailCheckBox" text="Email"/>
+                            <CheckBox fx:id="smsCheckBox" text="SMS (if enabled)"/>
+                        </HBox>
+                        <CheckBox fx:id="requireAckCheckBox" text="Require acknowledgment from parent"/>
+                    </VBox>
+
+                    <!-- Send Button -->
+                    <HBox spacing="15" alignment="CENTER_RIGHT">
+                        <Button text="Save as Draft" onAction="#handleSaveDraft" styleClass="secondary-button"/>
+                        <Button text="Preview" onAction="#handlePreview" styleClass="secondary-button"/>
+                        <Button fx:id="sendButton" text="Send Message" onAction="#handleSendMessage"
+                                styleClass="primary-button, send-button"/>
+                    </HBox>
+                </VBox>
+            </VBox>
+
+            <!-- History Panel -->
+            <VBox fx:id="historyPanel" styleClass="content-panel" spacing="15" visible="false" managed="false">
+                <padding>
+                    <Insets top="20" right="30" bottom="20" left="30"/>
+                </padding>
+
+                <HBox spacing="15" alignment="CENTER_LEFT">
+                    <TextField fx:id="historySearchField" promptText="Search messages..."
+                               prefWidth="300" styleClass="search-field"/>
+                    <ComboBox fx:id="historyFilterComboBox" promptText="Filter by category" prefWidth="200">
+                        <items>
+                            <fx:String fx:value="All Categories"/>
+                            <fx:String fx:value="General"/>
+                            <fx:String fx:value="Attendance"/>
+                            <fx:String fx:value="Grades"/>
+                            <fx:String fx:value="Behavior"/>
+                            <fx:String fx:value="Emergency"/>
+                        </items>
+                    </ComboBox>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button text="Refresh" onAction="#handleRefreshHistory" styleClass="secondary-button"/>
+                </HBox>
+
+                <TableView fx:id="historyTableView" VBox.vgrow="ALWAYS" styleClass="history-table">
+                    <columns>
+                        <TableColumn fx:id="historyDateCol" text="Date" prefWidth="150"/>
+                        <TableColumn fx:id="historyRecipientCol" text="Recipient" prefWidth="200"/>
+                        <TableColumn fx:id="historyCategoryCol" text="Category" prefWidth="120"/>
+                        <TableColumn fx:id="historySubjectCol" text="Subject" prefWidth="250"/>
+                        <TableColumn fx:id="historyStatusCol" text="Status" prefWidth="100"/>
+                        <TableColumn fx:id="historyActionsCol" text="Actions" prefWidth="100"/>
+                    </columns>
+                </TableView>
+            </VBox>
+
+            <!-- Bulk Messaging Panel -->
+            <VBox fx:id="bulkPanel" styleClass="content-panel" spacing="15" visible="false" managed="false">
+                <padding>
+                    <Insets top="20" right="30" bottom="20" left="30"/>
+                </padding>
+
+                <Label text="Bulk Parent Messaging" styleClass="section-title"/>
+
+                <HBox spacing="20">
+                    <VBox spacing="10" HBox.hgrow="ALWAYS">
+                        <Label text="Target Audience"/>
+                        <ComboBox fx:id="audienceComboBox" maxWidth="Infinity" promptText="Select audience">
+                            <items>
+                                <fx:String fx:value="All Parents"/>
+                                <fx:String fx:value="By Grade Level"/>
+                                <fx:String fx:value="By Homeroom"/>
+                                <fx:String fx:value="By Class/Course"/>
+                                <fx:String fx:value="Custom Selection"/>
+                            </items>
+                        </ComboBox>
+                    </VBox>
+                    <VBox spacing="10" HBox.hgrow="ALWAYS">
+                        <Label text="Grade Level (if applicable)"/>
+                        <ComboBox fx:id="gradeLevelComboBox" maxWidth="Infinity" promptText="Select grade">
+                            <items>
+                                <fx:String fx:value="All Grades"/>
+                                <fx:String fx:value="Kindergarten"/>
+                                <fx:String fx:value="1st Grade"/>
+                                <fx:String fx:value="2nd Grade"/>
+                                <fx:String fx:value="3rd Grade"/>
+                                <fx:String fx:value="4th Grade"/>
+                                <fx:String fx:value="5th Grade"/>
+                                <fx:String fx:value="6th Grade"/>
+                                <fx:String fx:value="7th Grade"/>
+                                <fx:String fx:value="8th Grade"/>
+                                <fx:String fx:value="9th Grade"/>
+                                <fx:String fx:value="10th Grade"/>
+                                <fx:String fx:value="11th Grade"/>
+                                <fx:String fx:value="12th Grade"/>
+                            </items>
+                        </ComboBox>
+                    </VBox>
+                </HBox>
+
+                <Label fx:id="recipientCountLabel" text="Estimated recipients: --" styleClass="info-label"/>
+
+                <Separator/>
+
+                <VBox spacing="5">
+                    <Label text="Announcement Subject"/>
+                    <TextField fx:id="bulkSubjectField" promptText="Enter announcement subject..."
+                               styleClass="input-field"/>
+                </VBox>
+
+                <VBox spacing="5" VBox.vgrow="ALWAYS">
+                    <Label text="Announcement Content"/>
+                    <TextArea fx:id="bulkContentArea" promptText="Type your announcement here..."
+                              prefRowCount="8" wrapText="true" VBox.vgrow="ALWAYS" styleClass="message-input"/>
+                </VBox>
+
+                <HBox spacing="20">
+                    <CheckBox fx:id="bulkPushCheckBox" text="Send push notification"/>
+                    <CheckBox fx:id="bulkEmailCheckBox" text="Send email" selected="true"/>
+                    <CheckBox fx:id="scheduleCheckBox" text="Schedule for later"/>
+                </HBox>
+
+                <HBox fx:id="scheduleBox" spacing="10" visible="false" managed="false">
+                    <Label text="Schedule Date/Time:"/>
+                    <DatePicker fx:id="scheduleDatePicker"/>
+                    <TextField fx:id="scheduleTimeField" promptText="HH:MM" prefWidth="80"/>
+                </HBox>
+
+                <HBox spacing="15" alignment="CENTER_RIGHT">
+                    <Button text="Preview" onAction="#handleBulkPreview" styleClass="secondary-button"/>
+                    <Button fx:id="sendBulkButton" text="Send to All Recipients" onAction="#handleSendBulk"
+                            styleClass="primary-button, send-button"/>
+                </HBox>
+            </VBox>
+
+            <!-- Templates Panel -->
+            <VBox fx:id="templatesPanel" styleClass="content-panel" spacing="15" visible="false" managed="false">
+                <padding>
+                    <Insets top="20" right="30" bottom="20" left="30"/>
+                </padding>
+
+                <HBox spacing="15" alignment="CENTER_LEFT">
+                    <Label text="Message Templates" styleClass="section-title" HBox.hgrow="ALWAYS"/>
+                    <Button text="+ Create Template" onAction="#handleCreateTemplate" styleClass="primary-button"/>
+                </HBox>
+
+                <ListView fx:id="templateListView" VBox.vgrow="ALWAYS" styleClass="template-list"/>
+
+                <!-- Template Preview -->
+                <VBox fx:id="templatePreviewBox" styleClass="info-card" spacing="10" visible="false" managed="false">
+                    <Label text="Template Preview" styleClass="section-subtitle"/>
+                    <Label fx:id="templateNameLabel" text="Template Name" styleClass="card-title"/>
+                    <Label fx:id="templateCategoryLabel" text="Category: --"/>
+                    <TextArea fx:id="templateContentPreview" editable="false" wrapText="true"
+                              prefRowCount="4" styleClass="preview-area"/>
+                    <HBox spacing="10" alignment="CENTER_RIGHT">
+                        <Button text="Edit" onAction="#handleEditTemplate" styleClass="secondary-button"/>
+                        <Button text="Use Template" onAction="#handleUseTemplate" styleClass="primary-button"/>
+                        <Button text="Delete" onAction="#handleDeleteTemplate" styleClass="danger-button"/>
+                    </HBox>
+                </VBox>
+            </VBox>
+        </StackPane>
+    </center>
+
+    <!-- Status Bar -->
+    <bottom>
+        <HBox styleClass="status-bar" alignment="CENTER_LEFT" spacing="20">
+            <padding>
+                <Insets top="8" right="20" bottom="8" left="20"/>
+            </padding>
+            <Label fx:id="statusLabel" text="Ready"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label fx:id="lastSyncLabel" text="Last sync: --"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>
