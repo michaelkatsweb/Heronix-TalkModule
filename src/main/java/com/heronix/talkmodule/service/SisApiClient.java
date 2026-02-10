@@ -25,7 +25,7 @@ public class SisApiClient {
     private final HttpClient httpClient;
     private final ObjectMapper objectMapper;
 
-    @Value("${heronix.sis.url:http://localhost:9580}")
+    @Value("${heronix.sis.url:http://localhost:9590}")
     private String sisBaseUrl;
 
     public SisApiClient(ObjectMapper objectMapper) {
@@ -41,7 +41,7 @@ public class SisApiClient {
     @SuppressWarnings("unchecked")
     public List<Map<String, Object>> searchStudents(String searchTerm) {
         try {
-            String url = sisBaseUrl + "/api/students/search?q=" + java.net.URLEncoder.encode(searchTerm, "UTF-8");
+            String url = sisBaseUrl + "/api/search/students?query=" + java.net.URLEncoder.encode(searchTerm, "UTF-8");
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(url))
                     .timeout(Duration.ofSeconds(10))
@@ -66,7 +66,7 @@ public class SisApiClient {
     @SuppressWarnings("unchecked")
     public List<Map<String, Object>> getParentContacts(Long studentId) {
         try {
-            String url = sisBaseUrl + "/api/students/" + studentId + "/parents";
+            String url = sisBaseUrl + "/api/parent-guardian/student/" + studentId + "/parents";
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(url))
                     .timeout(Duration.ofSeconds(10))
