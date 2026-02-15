@@ -21,6 +21,7 @@ public class LocalNewsItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long localId;
 
+    @Column(unique = true)
     private Long serverId;
 
     private String headline;
